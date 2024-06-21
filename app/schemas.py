@@ -8,3 +8,10 @@ class GameBase(BaseModel):
 	platform: str
 	genre: str
 	description: str
+
+
+class GameModel(GameBase):
+	id: int
+	
+	class Config:
+		orm_mode = True

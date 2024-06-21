@@ -3,52 +3,27 @@ from .models import Game as GameModel
 from .schemas import GameBase
 
 
-def get_games(db: Session):
-	"""
-	Get all games from the database
-	
-	Args:
-		db (Session): SQLAlchemy session
-		
-	Returns:
-		list[Game]: List of games
-	"""
-	games = db.query(GameModel).all()
-	return games
+def get_games_crud(db: Session):
+	return db.query(GameModel).all()
 
 
 def create_game_crud(db: Session, game: GameBase):
-	"""
-	Create a new game in the database
-	
-	Args:
-		db (Session): SQLAlchemy session
-		game (Game): Game schema
-		
-	Returns:
-		Game: Created game
-	"""
-	existing_game = db.query(GameModel).filter(GameModel.name == game.name).first()
-	if existing_game is not None:
+	existing_games = db.query(GameModel).filter(GameModel.name == game.name).first()
+	if existing_games is not None:
 		return None
 	
-	
-	new_game = GameModel(
-		name=game.name,
-		price=game.price,
-		platform=game.platform,
-		genre=game.genre,
-		description=game.description
-	)
-	
+	new_game = GameModel(**game.dict())
 	db.add(new_game)
 	db.commit()
 	db.refresh(new_game)
-	return GameModel(
-		id=new_game.id,
-		name=new_game.name,
-		price=new_game.price,
-		platform=new_game.platform,
-		genre=new_game.genre,
-		description=new_game.description
-	)
+	return new_game
+
+
+def delete_game_crud(db: Session, game_id: int):
+	game = db.query(GameModel).filter(GameModel.id == game_id).first()
+	if game is None:
+		return None
+	
+	db.delete(game)
+	db.commit()
+	return True
