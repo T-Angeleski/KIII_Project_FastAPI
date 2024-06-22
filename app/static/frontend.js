@@ -8,7 +8,7 @@ async function fetchGames() {
 
     games.forEach(game => {
         const cardDiv = document.createElement('div');
-        cardDiv.classList.add('card');
+        cardDiv.classList.add('game-card');
 
         const title = document.createElement('h3');
         title.textContent = game.name;
@@ -25,6 +25,10 @@ async function fetchGames() {
         const description = document.createElement('p');
         description.textContent = `Description: ${game.description}`;
 
+        const imageLink = document.createElement('img');
+        imageLink.src = game.image_url
+        imageLink.alt = game.name
+
 
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
@@ -35,11 +39,13 @@ async function fetchGames() {
 
         const editButton = document.createElement('button');
         editButton.textContent = 'Edit';
+        editButton.classList.add('edit-button');
         editButton.addEventListener('click', () => {
             window.location.href = `/static/create_game.html?id=${game.id}`;
         });
 
         cardDiv.appendChild(title);
+        cardDiv.appendChild(imageLink);
         cardDiv.appendChild(platform);
         cardDiv.appendChild(price);
         cardDiv.appendChild(genre);
@@ -58,14 +64,11 @@ async function deleteGame(gameId) {
 
 async function fetchGameById(gameId) {
     const resp = await fetch(`/games/${gameId}`);
-    console.log("fetching game by id")
     return resp.json();
 }
 
 async function handleFormSubmit(event) {
-    console.log("Handling form submit?")
     event.preventDefault();
-    console.log("Handling form submit")
 
     const gameId = document.getElementById('gameId').value;
     const game = {
@@ -73,10 +76,10 @@ async function handleFormSubmit(event) {
         price: parseFloat(document.getElementById('price').value),
         platform: document.getElementById('platform').value,
         genre: document.getElementById('genre').value,
-        description: document.getElementById('description').value
+        description: document.getElementById('description').value,
+        image_url: document.getElementById('image_url').value,
     }
 
-    console.log("Game data:", game)  // Debug
 
     // Check if exists for edit or create
     if (gameId) {
@@ -103,9 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM loaded", window.location.pathname)
     if (window.location.pathname === '/') {
         fetchGames();
-        console.log("fetched games")
     } else if (window.location.pathname === '/static/create_game.html') {
-        console.log("working at all?")
         const urlParams = new URLSearchParams(window.location.search);
         const gameId = urlParams.get('id');
         console.log(gameId)
@@ -117,12 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('platform').value = game.platform;
                 document.getElementById('genre').value = game.genre;
                 document.getElementById('description').value = game.description;
+                document.getElementById('image_url').value = game.image_url;
             });
         }
 
         const form = document.getElementById('gameForm');
         form.addEventListener('submit', handleFormSubmit);
-        form.style.border = "1px solid black";
-        console.log(form)
+        form.classList.add('game-form');
     }
 });

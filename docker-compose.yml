@@ -7,6 +7,9 @@ services:
     container_name: gaming-app
     ports:
       - "80:80"
+    volumes:
+      - ./app:/code/app
+      - ./static:/code/static
     depends_on:
       - db
     env_file:

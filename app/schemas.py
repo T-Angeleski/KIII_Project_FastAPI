@@ -8,6 +8,7 @@ class GameBase(BaseModel):
 	platform: str
 	genre: str
 	description: str
+	image_url: str
 
 
 class GameModel(GameBase):

@@ -9,7 +9,8 @@ nav {
     background-color: #333;
     color: white;
     padding: 1em;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
 }
 
 nav h1 {
@@ -41,12 +42,19 @@ nav a {
     position: relative;
 }
 
-.game-card h2 {
+.game-card h3 {
     margin-top: 0;
+    font-size: 1.5rem;
+    text-align: center;
 }
 
 .game-card p {
     margin: 0.5em 0;
+}
+
+.game-card img {
+    width: 100%;
+    height: auto;
 }
 
 .game-card button {
@@ -54,13 +62,18 @@ nav a {
     border: none;
     color: white;
     padding: 0.5em 1em;
-    position: absolute;
-    bottom: 1em;
-    right: 1em;
     cursor: pointer;
 }
 
-#create-game-form {
+#content > div > button.edit-button{
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 0.5em 1em;
+    cursor: pointer;
+}
+
+.game-form {
     max-width: 600px;
     margin: 2em auto;
     padding: 1em;
@@ -68,26 +81,24 @@ nav a {
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     background-color: #f4f4f4;
-}
-
-#create-game-form h2 {
-    margin-top: 0;
-}
-
-#create-game-form form {
     display: flex;
     flex-direction: column;
 }
 
-#create-game-form label {
+.game-form h2 {
+    margin-top: 0;
+}
+
+
+.game-form label {
     margin: 0.5em 0 0.2em;
 }
 
-#create-game-form input, #create-game-form textarea, #create-game-form button {
+.game-form input, .game-form textarea, .game-form button {
     margin-bottom: 1em;
 }
 
-#create-game-form button {
+.game-form button {
     background-color: #4CAF50;
     border: none;
     color: white;
