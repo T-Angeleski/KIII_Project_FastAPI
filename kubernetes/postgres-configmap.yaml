@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgres-config
-  namespace: gaming-app-namespace
-data:
-  POSTGRES_DB: postgres
-  POSTGRES_USER: postgres
