@@ -1,0 +1,52 @@
+# CONFIGMAP AND SECRET
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastapi-config
+  namespace: gaming-app-namespace
+data:
+  POSTGRES_URL: "postgres-service.gaming-app-namespace.svc.cluster.local"
+  POSTGRES_DATABASE: "postgres"
+  POSTGRES_USER: "postgres"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fastapi-secret
+  namespace: gaming-app-namespace
+type: Opaque
+data:
+  POSTGRES_PASSWORD: YWRtaW4=
+#  ------------ Deployment -------------
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gaming-app-deployment
+  namespace: gaming-app-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gaming-app
+  template:
+    metadata:
+      labels:
+        app: gaming-app
+    spec:
+      containers:
+        - name: gaming-app
+          image: tangeleski/gaming-app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: fastapi-config
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fastapi-secret
+                  key: POSTGRES_PASSWORD
