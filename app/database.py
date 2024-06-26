@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, URL
 from sqlalchemy.orm import sessionmaker
 
 # POSTGRES_URL = os.getenv("POSTGRES_URL")
+print("Getting ENV variables")
 POSTGRES_DATABASE = os.getenv("POSTGRES_DATABASE")
 POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
@@ -26,7 +27,9 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL)
 try:
 	with engine.connect() as connection:
 		print("Connection to database successful!")
+		print(f"URL: {SQLALCHEMY_DATABASE_URL}")
 except Exception as e:
 	print(f"Error connecting: {str(e)}")
+	print(f"URL: {SQLALCHEMY_DATABASE_URL}")
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

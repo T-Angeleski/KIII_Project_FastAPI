@@ -11,6 +11,24 @@ data:
   POSTGRES_PORT: "5432"
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-init-script
+  namespace: gaming-app-namespace
+data:
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS games
+    (
+        id          SERIAL PRIMARY KEY,
+        name        VARCHAR(255)   NOT NULL,
+        price       NUMERIC(10, 2) NOT NULL,
+        platform    VARCHAR(50)    NOT NULL,
+        genre       VARCHAR(50)    NOT NULL,
+        description TEXT,
+        image_url   TEXT
+    );
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: postgres-secret
@@ -59,18 +77,17 @@ spec:
           envFrom:
             - configMapRef:
                 name: postgres-config
-          env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-secret
-                  key: POSTGRES_PASSWORD
+            - secretRef:
+                name: postgres-secret
           ports:
             - containerPort: 5432
               name: postgres
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: postgres-data
+              name: postgres-storage
+            - mountPath: /docker-entrypoint-initdb.d
+              name: init-script
+              readOnly: true
           livenessProbe:
             exec:
               command:
@@ -78,7 +95,10 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
       volumes:
-        - name: postgres-data
+        - name: init-script
+          configMap:
+            name: db-init-script
+        - name: postgres-storage
           persistentVolumeClaim:
             claimName: postgres-pvc
 ---

@@ -51,32 +51,11 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 80
-          env:
-            - name: POSTGRES_DATABASE
-              valueFrom:
-                configMapKeyRef:
-                  name: fastapi-config
-                  key: POSTGRES_DATABASE
-            - name: POSTGRES_USER
-              valueFrom:
-                configMapKeyRef:
-                  name: fastapi-config
-                  key: POSTGRES_USER
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: fastapi-secret
-                  key: POSTGRES_PASSWORD
-            - name: POSTGRES_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: fastapi-config
-                  key: POSTGRES_HOST
-            - name: POSTGRES_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: fastapi-config
-                  key: POSTGRES_PORT
+          envFrom:
+            - configMapRef:
+                name: fastapi-config
+            - secretRef:
+                name: fastapi-secret
       volumes:
         - name: static-files
           persistentVolumeClaim:
