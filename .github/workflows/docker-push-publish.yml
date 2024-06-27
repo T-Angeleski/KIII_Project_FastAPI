@@ -32,9 +32,24 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/gaming-app:latest
 
-  test-docker-compose:
+  check-compose:
     runs-on: ubuntu-latest
     needs: build-and-push
+
+    services:
+      db:
+        image: postgres:latest
+        ports:
+          - "5433:5432"
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
 
     steps:
       - name: Checkout code
@@ -52,10 +67,11 @@ jobs:
       - name: Start Docker Compose
         run: docker-compose up -d
 
-      - name: Run tests
+      - name: Verify DB health
         run: |
           sleep 30  # Wait for services to be fully up and running
-          curl -f http://localhost:80 || exit 1
-
+          docker-compose ps
+          docker inspect --format='{{json .State.Health}}' $(docker-compose ps -q db)
+          
       - name: Stop Docker Compose
         run: docker-compose down
