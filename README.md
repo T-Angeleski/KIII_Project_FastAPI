@@ -7,7 +7,7 @@ With docker:
 ```
 docker compose up
 ```
-
+With kubernetes:
 ```
 k3d cluster create gaming-app-cluster -s 1 -a 2 --port 80:80@loadbalancer
 
